@@ -223,7 +223,7 @@ export default function MapleDealsWebsite() {
 
         <div className="relative mx-auto max-w-7xl px-6 py-14 md:px-10 lg:px-12 lg:py-20">
           <div className="mb-6 grid gap-3 md:grid-cols-3">
-            {["Amazon Canada Finds", "🔥 Fresh Daily Deals", "⚡ Big Savings Fast"].map(
+            {["🍁 Amazon Canada Finds", "🔥 Fresh Daily Deals", "⚡ Big Savings Fast"].map(
               (item) => (
                 <div
                   key={item}
@@ -512,4 +512,3 @@ export default function MapleDealsWebsite() {
     </div>
   );
 }
-
