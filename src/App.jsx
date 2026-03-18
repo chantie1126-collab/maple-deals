@@ -19,9 +19,19 @@ function normalizeDeal(row, index) {
       row["Old Price"] ||
       "",
     discount:
-      row.discount || row.Discount || row["Discount %"] || row["Discount"] || "",
+      row.discount ||
+      row.Discount ||
+      row["Discount %"] ||
+      row["Discount"] ||
+      "",
     image: (() => {
-      let img = row.image || row.Image || row.imageUrl || row.ImageURL || row["Image URL"] || "";
+      let img =
+        row.image ||
+        row.Image ||
+        row.imageUrl ||
+        row.ImageURL ||
+        row["Image URL"] ||
+        "";
 
       if (!img) return "";
 
@@ -30,8 +40,7 @@ function normalizeDeal(row, index) {
         if (match && match[1]) return match[1];
       }
 
-      img = img.trim();
-      return img;
+      return typeof img === "string" ? img.trim() : "";
     })(),
     link: row.link || row.Link || row.url || row.URL || "#",
     category: row.category || row.Category || "Deals",
@@ -41,6 +50,24 @@ function normalizeDeal(row, index) {
       String(row.featured || row.Featured || "").toLowerCase() === "true",
   };
 }
+
+const SOCIAL_LINKS = [
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/dealsmaple/",
+    icon: "instagram",
+  },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61588523198142",
+    icon: "facebook",
+  },
+  {
+    name: "Pinterest",
+    href: "https://ca.pinterest.com/atozdealscanada/",
+    icon: "pinterest",
+  },
+];
 
 export default function App() {
   const [deals, setDeals] = useState([]);
@@ -93,9 +120,9 @@ export default function App() {
   }, [deals]);
 
   const filteredDeals = useMemo(() => {
-    return deals.filter((deal) => {
-      return selectedCategory === "All" || deal.category === selectedCategory;
-    });
+    return deals.filter(
+      (deal) => selectedCategory === "All" || deal.category === selectedCategory,
+    );
   }, [deals, selectedCategory]);
 
   const featuredDeals = filteredDeals.filter((deal) => deal.featured).slice(0, 3);
@@ -111,11 +138,12 @@ export default function App() {
           <div style={styles.heroLeft}>
             <div style={styles.badge}>Amazon Canada Savings</div>
             <h1 style={styles.title}>
-              Hot Canadian deals, pulled straight from your sheet.
+              The best Amazon deals in Canada — handpicked so you don’t have to
+              hunt for them.
             </h1>
             <p style={styles.subtitle}>
-              Add a new row to Google Sheets and your latest deal appears on the
-              site automatically.
+              New deals are added daily, so you always get the latest discounts
+              before they’re gone.
             </p>
           </div>
 
@@ -125,11 +153,28 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        <div style={styles.socialRow}>
+          {SOCIAL_LINKS.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              style={styles.socialIconLink}
+              aria-label={link.name}
+              title={link.name}
+            >
+              {renderIcon(link.icon)}
+            </a>
+          ))}
+        </div>
       </header>
 
       <main style={styles.main}>
         {loading && <div style={styles.message}>Loading deals...</div>}
         {error && !loading && <div style={styles.error}>{error}</div>}
+
         {!loading && !error && filteredDeals.length === 0 && (
           <div style={styles.message}>No deals found.</div>
         )}
@@ -190,6 +235,36 @@ export default function App() {
   );
 }
 
+function renderIcon(type) {
+  const common = { width: 18, height: 18, fill: "currentColor" };
+
+  if (type === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" {...common}>
+        <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm5 5a5 5 0 110 10 5 5 0 010-10zm6.5-.75a1.25 1.25 0 11-2.5 0 1.25 1.25 0 012.5 0zM12 9a3 3 0 100 6 3 3 0 000-6z" />
+      </svg>
+    );
+  }
+
+  if (type === "facebook") {
+    return (
+      <svg viewBox="0 0 24 24" {...common}>
+        <path d="M13 22v-9h3l1-4h-4V7c0-1.03.3-1.73 1.8-1.73H17V2.14C16.68 2.1 15.56 2 14.26 2 11.5 2 10 3.66 10 6.7V9H7v4h3v9h3z" />
+      </svg>
+    );
+  }
+
+  if (type === "pinterest") {
+    return (
+      <svg viewBox="0 0 24 24" {...common}>
+        <path d="M12 2a10 10 0 00-3.64 19.32c-.05-.82-.1-2.08.02-2.98.11-.8.7-5.09.7-5.09s-.18-.37-.18-.91c0-.85.49-1.49 1.1-1.49.52 0 .77.39.77.85 0 .52-.33 1.3-.5 2.02-.14.6.3 1.1.89 1.1 1.07 0 1.89-1.13 1.89-2.77 0-1.45-1.04-2.46-2.53-2.46-1.73 0-2.75 1.3-2.75 2.64 0 .52.2 1.08.45 1.38.05.06.06.11.05.17-.05.19-.16.6-.18.68-.03.11-.1.14-.23.08-.86-.4-1.4-1.64-1.4-2.64 0-2.15 1.56-4.13 4.5-4.13 2.36 0 4.2 1.68 4.2 3.93 0 2.35-1.48 4.24-3.54 4.24-.69 0-1.34-.36-1.56-.78l-.42 1.6c-.15.58-.56 1.3-.83 1.74A10 10 0 1012 2z" />
+      </svg>
+    );
+  }
+
+  return null;
+}
+
 function DealCard({ deal, featured = false }) {
   return (
     <article style={{ ...styles.card, ...(featured ? styles.featuredCard : {}) }}>
@@ -200,7 +275,9 @@ function DealCard({ deal, featured = false }) {
           <div style={styles.noImage}>No image</div>
         )}
 
-        {deal.discount ? <div style={styles.discount}>{deal.discount} OFF</div> : null}
+        {deal.discount ? (
+          <div style={styles.discount}>{deal.discount} OFF</div>
+        ) : null}
       </div>
 
       <div style={styles.cardBody}>
@@ -214,7 +291,9 @@ function DealCard({ deal, featured = false }) {
 
         <div style={styles.priceRow}>
           {deal.price ? <span style={styles.price}>{deal.price}</span> : null}
-          {deal.oldPrice ? <span style={styles.oldPrice}>{deal.oldPrice}</span> : null}
+          {deal.oldPrice ? (
+            <span style={styles.oldPrice}>{deal.oldPrice}</span>
+          ) : null}
         </div>
 
         <a href={deal.link} target="_blank" rel="noreferrer" style={styles.button}>
@@ -291,7 +370,8 @@ const styles = {
     background:
       "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
     border: "1px solid rgba(255, 149, 0, 0.2)",
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 18px 40px rgba(0,0,0,0.3)",
+    boxShadow:
+      "inset 0 1px 0 rgba(255,255,255,0.06), 0 18px 40px rgba(0,0,0,0.3)",
   },
   logo: {
     width: "100%",
@@ -395,7 +475,8 @@ const styles = {
     gap: 22,
   },
   card: {
-    background: "linear-gradient(180deg, rgba(31,11,11,0.98), rgba(12,12,12,0.98))",
+    background:
+      "linear-gradient(180deg, rgba(31,11,11,0.98), rgba(12,12,12,0.98))",
     border: "1px solid rgba(255,255,255,0.08)",
     borderRadius: 28,
     overflow: "hidden",
@@ -514,5 +595,24 @@ const styles = {
     color: "#ffe3e3",
     background: "rgba(140, 33, 33, 0.3)",
     border: "1px solid rgba(255, 120, 120, 0.25)",
+  },
+  socialRow: {
+    marginTop: 20,
+    display: "flex",
+    gap: 16,
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
+  socialIconLink: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: "50%",
+    border: "1px solid rgba(255, 180, 0, 0.25)",
+    background: "rgba(255, 122, 0, 0.08)",
+    color: "#ffd46b",
+    transition: "all 0.2s ease",
   },
 };
