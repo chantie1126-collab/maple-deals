@@ -1,226 +1,58 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Base */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background: #f5f5f5;
-  color: #111;
+  margin: 0;
 }
 
-/* Layout */
-.page {
-  min-height: 100vh;
-}
-
-/* Containers */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
 }
 
-/* Hero */
-.hero {
-  background: linear-gradient(180deg, #efefef 0%, #ffffff 60%);
-  border-bottom: 4px solid #000;
-}
-
-.hero-title {
-  font-size: 42px;
-  font-weight: 900;
-  margin-bottom: 15px;
-}
-
-.hero-copy {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 25px;
-}
-
-.brand-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+h1 {
   margin-bottom: 20px;
 }
 
-.brand-logo {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-
-.brand-name {
-  font-weight: 900;
-  font-size: 18px;
-}
-
-.brand-subtitle {
-  font-size: 14px;
-  color: #777;
-}
-
-/* Buttons */
-.primary-cta {
-  background: linear-gradient(135deg, #d70000, #ff7a00);
-  color: #fff;
-  border: 2px solid #000;
-  padding: 12px 18px;
-  border-radius: 14px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.secondary-cta {
-  background: #fff;
-  border: 2px solid #000;
-  padding: 12px 18px;
-  border-radius: 14px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Socials */
-.social-link {
-  display: inline-flex;
-  border: 2px solid #000;
-  padding: 8px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background: #fff;
-}
-
-/* Search */
-.search-panel {
-  margin-bottom: 25px;
-}
-
-.search-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 2px solid #000;
-  padding: 10px;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.search-input-wrap input {
-  border: none;
-  outline: none;
+input {
   width: 100%;
-}
-
-/* Categories */
-.category-row {
+  padding: 10px;
   margin-bottom: 20px;
 }
 
-.category-pill {
-  padding: 8px 14px;
-  border: 2px solid #000;
-  border-radius: 20px;
-  background: #fff;
-  margin-right: 8px;
-  cursor: pointer;
+.categories {
+  margin-bottom: 20px;
 }
 
-.category-pill.active {
-  background: linear-gradient(135deg, #d70000, #ff7a00);
-  color: #fff;
+.categories button {
+  margin-right: 10px;
+  padding: 8px 12px;
 }
 
-/* Deals Grid */
-.deals-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
-/* Deal Card */
-.deal-card {
-  background: #fff;
-  border: 2px solid #000;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 8px 0 #000;
+.card {
+  background: white;
   padding: 15px;
+  border: 1px solid #ddd;
 }
 
-.deal-card img {
+.card img {
   width: 100%;
-  height: 180px;
+  height: 150px;
   object-fit: cover;
-  margin-bottom: 10px;
 }
 
-.deal-title {
-  font-weight: bold;
-  margin-bottom: 8px;
+.price {
+  margin-top: 10px;
 }
 
-.deal-description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.price-row {
-  margin-bottom: 10px;
-}
-
-.price-current {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.price-old {
+.price span {
   margin-left: 10px;
   text-decoration: line-through;
   color: #999;
-}
-
-.deal-button {
-  display: inline-block;
-  margin-top: 10px;
-  text-decoration: none;
-  background: linear-gradient(135deg, #d70000, #ff7a00);
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 2px solid #000;
-}
-
-/* Featured */
-.featured-grid {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-.featured-card {
-  background: #fff;
-  border: 2px solid #000;
-  border-radius: 16px;
-  padding: 10px;
-  width: 200px;
-  box-shadow: 0 6px 0 #000;
-}
-
-.featured-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 8px;
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 40px;
 }
