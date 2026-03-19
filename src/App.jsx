@@ -35,7 +35,7 @@ function normalizeDeal(row, index) {
 
       if (!img) return "";
 
-      if (typeof img === "string" && img.startsWith("=IMAGE(")) {
+      if (typeof img === "string" && img.startsWith('=IMAGE(')) {
         const match = img.match(/=IMAGE\("(.*?)"\)/);
         if (match && match[1]) return match[1];
       }
@@ -43,7 +43,7 @@ function normalizeDeal(row, index) {
       return typeof img === "string" ? img.trim() : "";
     })(),
     link: row.link || row.Link || row.url || row.URL || "#",
-    category: row.category || row.Category || "Deals",
+    category: String(row.category || row.Category || "Deals").trim(),
     store: row.store || row.Store || "Amazon Canada",
     featured:
       String(row.featured || row.Featured || "").toLowerCase() === "yes" ||
@@ -120,13 +120,24 @@ export default function App() {
   }, [deals]);
 
   const filteredDeals = useMemo(() => {
-    return deals.filter(
-      (deal) => selectedCategory === "All" || deal.category === selectedCategory,
-    );
+    return deals.filter((deal) => {
+      if (selectedCategory === "All") return true;
+      return (
+        deal.category.trim().toLowerCase() ===
+        selectedCategory.trim().toLowerCase()
+      );
+    });
   }, [deals, selectedCategory]);
 
-  const featuredDeals = filteredDeals.filter((deal) => deal.featured).slice(0, 3);
-  const regularDeals = filteredDeals.filter((deal) => !deal.featured);
+  const showFeaturedDeals = selectedCategory === "All";
+  const featuredDeals = showFeaturedDeals
+    ? filteredDeals.filter((deal) => deal.featured).slice(0, 3)
+    : [];
+  const latestDeals = showFeaturedDeals
+    ? filteredDeals.filter(
+        (deal) => !featuredDeals.some((featuredDeal) => featuredDeal.id === deal.id),
+      )
+    : filteredDeals;
 
   return (
     <div style={styles.page}>
@@ -175,11 +186,7 @@ export default function App() {
         {loading && <div style={styles.message}>Loading deals...</div>}
         {error && !loading && <div style={styles.error}>{error}</div>}
 
-        {!loading && !error && filteredDeals.length === 0 && (
-          <div style={styles.message}>No deals found.</div>
-        )}
-
-        {!loading && !error && featuredDeals.length > 0 && (
+        {!loading && !error && showFeaturedDeals && featuredDeals.length > 0 && (
           <section style={{ marginBottom: 44 }}>
             <div style={styles.sectionHeaderRow}>
               <h2 style={styles.sectionTitle}>Featured Deals</h2>
@@ -194,13 +201,8 @@ export default function App() {
           </section>
         )}
 
-        {!loading && !error && regularDeals.length > 0 && (
-          <section>
-            <div style={styles.sectionHeaderRow}>
-              <h2 style={styles.sectionTitle}>Latest Deals</h2>
-              <div style={styles.count}>{filteredDeals.length} deals</div>
-            </div>
-
+        {!loading && !error && (
+          <section style={{ marginBottom: 28 }}>
             <div style={styles.controlsPanel}>
               <div style={styles.categoryList}>
                 {categories.map((category) => {
@@ -222,12 +224,25 @@ export default function App() {
                 })}
               </div>
             </div>
+          </section>
+        )}
 
-            <div style={styles.grid}>
-              {regularDeals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} />
-              ))}
+        {!loading && !error && (
+          <section>
+            <div style={styles.sectionHeaderRow}>
+              <h2 style={styles.sectionTitle}>Latest Deals</h2>
+              <div style={styles.count}>{latestDeals.length} deals</div>
             </div>
+
+            {latestDeals.length > 0 ? (
+              <div style={styles.grid}>
+                {latestDeals.map((deal) => (
+                  <DealCard key={deal.id} deal={deal} />
+                ))}
+              </div>
+            ) : (
+              <div style={styles.emptyState}>No deals found in this category yet.</div>
+            )}
           </section>
         )}
       </main>
@@ -240,7 +255,7 @@ function renderIcon(type) {
 
   if (type === "instagram") {
     return (
-      <svg viewBox="0 0 24 24" {...common}>
+      <svg viewBox="0 0 24 24" {...common} aria-hidden="true">
         <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm5 5a5 5 0 110 10 5 5 0 010-10zm6.5-.75a1.25 1.25 0 11-2.5 0 1.25 1.25 0 012.5 0zM12 9a3 3 0 100 6 3 3 0 000-6z" />
       </svg>
     );
@@ -248,7 +263,7 @@ function renderIcon(type) {
 
   if (type === "facebook") {
     return (
-      <svg viewBox="0 0 24 24" {...common}>
+      <svg viewBox="0 0 24 24" {...common} aria-hidden="true">
         <path d="M13 22v-9h3l1-4h-4V7c0-1.03.3-1.73 1.8-1.73H17V2.14C16.68 2.1 15.56 2 14.26 2 11.5 2 10 3.66 10 6.7V9H7v4h3v9h3z" />
       </svg>
     );
@@ -256,8 +271,8 @@ function renderIcon(type) {
 
   if (type === "pinterest") {
     return (
-      <svg viewBox="0 0 24 24" {...common}>
-        <path d="M12 2a10 10 0 00-3.64 19.32c-.05-.82-.1-2.08.02-2.98.11-.8.7-5.09.7-5.09s-.18-.37-.18-.91c0-.85.49-1.49 1.1-1.49.52 0 .77.39.77.85 0 .52-.33 1.3-.5 2.02-.14.6.3 1.1.89 1.1 1.07 0 1.89-1.13 1.89-2.77 0-1.45-1.04-2.46-2.53-2.46-1.73 0-2.75 1.3-2.75 2.64 0 .52.2 1.08.45 1.38.05.06.06.11.05.17-.05.19-.16.6-.18.68-.03.11-.1.14-.23.08-.86-.4-1.4-1.64-1.4-2.64 0-2.15 1.56-4.13 4.5-4.13 2.36 0 4.2 1.68 4.2 3.93 0 2.35-1.48 4.24-3.54 4.24-.69 0-1.34-.36-1.56-.78l-.42 1.6c-.15.58-.56 1.3-.83 1.74A10 10 0 1012 2z" />
+      <svg viewBox="0 0 24 24" {...common} aria-hidden="true">
+        <path d="M12 2C6.48 2 2 6.48 2 12c0 4.21 2.61 7.8 6.29 9.24-.09-.78-.17-1.98.04-2.83.19-.8 1.23-5.11 1.23-5.11s-.31-.63-.31-1.56c0-1.46.85-2.55 1.9-2.55.9 0 1.33.67 1.33 1.48 0 .9-.57 2.24-.87 3.48-.25 1.05.53 1.9 1.56 1.9 1.87 0 3.31-1.97 3.31-4.82 0-2.52-1.81-4.29-4.39-4.29-2.99 0-4.74 2.24-4.74 4.56 0 .9.35 1.87.79 2.39.09.11.1.2.07.31-.08.34-.26 1.05-.3 1.2-.05.2-.16.24-.37.14-1.38-.64-2.24-2.65-2.24-4.26 0-3.47 2.52-6.66 7.27-6.66 3.82 0 6.8 2.72 6.8 6.36 0 3.8-2.4 6.86-5.73 6.86-1.12 0-2.18-.58-2.54-1.26l-.69 2.64c-.25.96-.93 2.16-1.39 2.89 1.04.32 2.14.5 3.29.5 5.52 0 10-4.48 10-10S17.52 2 12 2z" />
       </svg>
     );
   }
@@ -275,9 +290,7 @@ function DealCard({ deal, featured = false }) {
           <div style={styles.noImage}>No image</div>
         )}
 
-        {deal.discount ? (
-          <div style={styles.discount}>{deal.discount} OFF</div>
-        ) : null}
+        {deal.discount ? <div style={styles.discount}>{deal.discount} OFF</div> : null}
       </div>
 
       <div style={styles.cardBody}>
@@ -291,9 +304,7 @@ function DealCard({ deal, featured = false }) {
 
         <div style={styles.priceRow}>
           {deal.price ? <span style={styles.price}>{deal.price}</span> : null}
-          {deal.oldPrice ? (
-            <span style={styles.oldPrice}>{deal.oldPrice}</span>
-          ) : null}
+          {deal.oldPrice ? <span style={styles.oldPrice}>{deal.oldPrice}</span> : null}
         </div>
 
         <a href={deal.link} target="_blank" rel="noreferrer" style={styles.button}>
@@ -614,5 +625,13 @@ const styles = {
     background: "rgba(255, 122, 0, 0.08)",
     color: "#ffd46b",
     transition: "all 0.2s ease",
+  },
+  emptyState: {
+    padding: "24px 18px",
+    borderRadius: 20,
+    border: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(255,255,255,0.03)",
+    color: "rgba(255,247,239,0.72)",
+    fontSize: 15,
   },
 };
