@@ -1,6 +1,6 @@
 # Maple Deals
 
-Vite + React project for Maple Deals.
+Vite + React project for a deals website powered by Google Sheets.
 
 ## Run locally
 
@@ -17,6 +17,8 @@ npm run build
 
 ## Deploy to Vercel
 
-- Framework preset: Vite
-- Build command: `npm run build`
-- Output directory: `dist`
+1. Push this project to GitHub.
+2. Import the repo into Vercel.
+3. Use these settings if Vercel does not detect them automatically:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
